@@ -27,7 +27,8 @@ function MainPage() {
         // Fetch total pages count
         fetch(`http://localhost:8080/api/users/count`)
             .then(response => response.json())
-            .then(data => setTotalPages(data));
+            .then(data => setTotalPages(data))
+            .catch(error => console.error('Error fetching data:', error));
 
         // Fetch initial page data
         fetchPageData(1);
