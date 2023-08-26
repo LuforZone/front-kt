@@ -74,11 +74,11 @@ function MainPage() {
     const handlePutDatas = async () => {
         console.log("handlePutDatas");
         const requestBody = {
-            name: nameToPost,
-            phone: phoneToPost,
-            sex: sexToPost,
+            name: nameToPost?nameToPost:undefined,
+            phone: phoneToPost?phoneToPost:undefined,
+            sex: sexToPost?sexToPost:undefined,
             email: emailToPost,
-            uuid: uuidToPost
+            uuid: uuidToPost?uuidToPost:undefined
         };
         console.log(requestBody);
         const userToUpdate = usersData.find(user => user.email === emailToPost);
@@ -90,7 +90,8 @@ function MainPage() {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/api/users/${userToUpdate.uuid}`, {
+            console.log("access put try");
+            const response = await fetch(`http://localhost:8080/api/users/${userToUpdate.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -100,6 +101,7 @@ function MainPage() {
 
             const responseData = await response.json();
             setMessage(responseData.message);
+            router.reload();
         } catch (error) {
             console.error('Error sending POST request:', error);
         }
@@ -112,6 +114,7 @@ function MainPage() {
             });
             const responseData = await response.json();
             setMessage(responseData.message);
+            router.reload();
         } catch (error) {
             console.error('Error deleting user:', error);
         }
