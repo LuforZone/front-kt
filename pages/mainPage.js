@@ -14,7 +14,11 @@ function MainPage() {
     const [sexToPost, setSexToPost] = useState('');
     const [emailToPost, setEmailToPost] = useState('');
     const [uuidToPost, setUuidToPost] = useState('');
-    const [canSubmit, setCanSubmit] = useState(false);
+    const [conform, setConform] = useState('');
+
+    const setConformType = (type) => {
+        setConform(type);
+    };
 
     useEffect(() => {
         // Check if the user is authenticated (e.g., coming from LoginPage)
@@ -41,7 +45,8 @@ function MainPage() {
         fetchPageData(page);
         setCurrentPage(page);
     };
-    const handleSubmit = async () => {
+    const handlePostDatas = async () => {
+        console.log("handlePostDatas");
         const requestBody = {
             name: nameToPost,
             phone: phoneToPost,
@@ -58,30 +63,139 @@ function MainPage() {
                 },
                 body: JSON.stringify(requestBody)
             });
-            
+
             const responseData = await response.json();
-            setMessage(responseData[1]);
+            setMessage(responseData.message);
         } catch (error) {
             console.error('Error sending POST request:', error);
         }
     };
 
+    const handlePutDatas = async () => {
+        console.log("handlePutDatas");
+        const requestBody = {
+            name: nameToPost,
+            phone: phoneToPost,
+            sex: sexToPost,
+            email: emailToPost,
+            uuid: uuidToPost
+        };
+        console.log(requestBody);
+        const userToUpdate = usersData.find(user => user.email === emailToPost);
+
+        if (!userToUpdate) {
+            setMessage('不能找到对应的数据条目，请核对邮箱');
+            console.error('User not found for the provided email.');
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/users/${userToUpdate.uuid}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            const responseData = await response.json();
+            setMessage(responseData.message);
+        } catch (error) {
+            console.error('Error sending POST request:', error);
+        }
+    };
+    const handleDeleteDatas = async () => {
+        const emailToDelete = emailToPost;
+        try {
+            const response = await fetch(`http://localhost:8080/api/users/${emailToDelete}`, {
+                method: 'DELETE',
+            });
+            const responseData = await response.json();
+            setMessage(responseData.message);
+        } catch (error) {
+            console.error('Error deleting user:', error);
+        }
+    };
+    const handleAddButtonClick = () => {
+        setMessage("请在上面的输入栏中输入要加入人员的信息")
+        setConformType("add");
+    };
+    const handleDeleteButtonClick = () => {
+        setMessage("请在上面的输入栏中输入要删除人员的邮箱")
+        setConformType("delete");
+    };
+    const handlePutButtonClick = () => {
+        setMessage("请在上面的输入栏中输入要更改人员的信息，注意附带邮箱")
+        setConformType("put");
+    };
+    const handleConformButtonClick = async () => {
+        switch (conform) {
+            case "add":
+                handlePostDatas();
+                break;
+            case "delete":
+                handleDeleteDatas();
+                break;
+            case "put":
+                handlePutDatas();
+                break;
+            default:
+                setMessage('请选择一个操作类型');
+        }
+    };
 
     return (
         <div className={styles['main']}>
             <div className={styles['sidebar']}>
                 <div className={styles['sidebar-buttons']}>
-                    <button className={styles['sidebar-change']}>添加</button>
-                    <button className={styles['sidebar-delete']}>更改</button>
-                    <button className={styles['sidebar-add']}>删除</button>
+                    <button className={styles['sidebar-change']}
+                        onClick={handleAddButtonClick}
+                    >添加</button>
+                    <button className={styles['sidebar-delete']}
+                        onClick={handlePutButtonClick}
+                    >更改</button>
+                    <button className={styles['sidebar-add']}
+                        onClick={handleDeleteButtonClick}
+                    >删除</button>
                 </div>
                 <div className={styles['sidebar-inputs']}>
                     <p>输入栏⬇️</p>
-                    <input></input>
-                    <button className={styles['sidebar-conform']}>确认</button>
-                    </div>
+                    <input
+                        type="text"
+                        value={nameToPost}
+                        placeholder="输入名称"
+                        onChange={(e) => setNameToPost(e.target.value)}
+                    />
+                    <input
+                        type="text"
+                        value={phoneToPost}
+                        placeholder="输入手机号码"
+                        onChange={(e) => setPhoneToPost(e.target.value)} // 添加onChange处理函数
+                    />
+                    <input
+                        type="text"
+                        value={sexToPost}
+                        placeholder="输入male或female"
+                        onChange={(e) => setSexToPost(e.target.value)} // 添加onChange处理函数
+                    />
+                    <input
+                        type="text"
+                        value={emailToPost}
+                        placeholder="输入邮箱"
+                        onChange={(e) => setEmailToPost(e.target.value)} // 添加onChange处理函数
+                    />
+                    <input
+                        type="text"
+                        value={uuidToPost}
+                        placeholder="输入uuid"
+                        onChange={(e) => setUuidToPost(e.target.value)} // 添加onChange处理函数
+                    />
+                    <button className={styles['sidebar-conform']}
+                        onClick={handleConformButtonClick}
+                    >确认</button>
+                </div>
                 <div className={styles['message-board']}>
-                     <p className={styles['message']}>{message} </p>
+                    <p className={styles['message']}>{message} </p>
                 </div>
             </div>
             <div className={styles['main-container']}> {/* 使用组件级的样式类名 */}
