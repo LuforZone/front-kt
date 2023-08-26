@@ -20,7 +20,7 @@ function LoginPage() {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('api/users/login', {
+            const response = await fetch(':8080/api/users/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
