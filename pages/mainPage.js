@@ -25,7 +25,7 @@ function MainPage() {
         // If not authenticated, redirect to error page
 
         // Fetch total pages count
-        fetch('http://localhost:8080/api/users/count')
+        fetch(`http://localhost:8080/api/users/count`)
             .then(response => response.json())
             .then(data => setTotalPages(data));
 
