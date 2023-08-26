@@ -1,53 +1,75 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import styles from '../styles/login.module.css';
 
-export default function Home() {
-  const router = useRouter();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+function LoginPage() {
+    const router = useRouter();
+    const [account, setAccount] = useState('');
+    const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-  const handleLogin = () => {
-    // 在真实应用中，这里可以添加与后端的交互来验证用户登录信息
-    // 在示例中，我们假设用户名为 "user"，密码为 "password" 才能登录
-    if (username === 'user' && password === 'password') {
-      setIsLoggedIn(true);
-    }
-  };
+    const handleAccountChange = (event) => {
+        setAccount(event.target.value);
+        setIsButtonDisabled(!event.target.value || !password);
+    };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUsername('');
-    setPassword('');
-  };
+    const handlePasswordChange = (event) => {
+        setPassword(event.target.value);
+        setIsButtonDisabled(!account || !event.target.value);
+    };
 
-  return (
-    <div>
-      {isLoggedIn ? (
-        <div>
-          <h1>className={styles.h1} Welcome, {username}! </h1>
-          <button onClick={handleLogout}>Logout</button>
-          {/* 在这里添加展示数据的组件 */}
+    const handleLogin = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }, 
+                credentials: 'include', // 携带跨域请求的凭证
+                body: JSON.stringify({
+                    "account": account,
+                    "password": password
+                }),
+            });
+
+            if (response.status === 200) {
+                router.push('/mainPage');
+            } else {
+                setErrorMessage('请检查账户名或密码');
+            }
+        } catch (error) {
+            console.error('登录失败：', error);
+        }
+    };
+
+    return (
+        <div className="login-container">
+          <div className="input-group">
+            <input
+              type="text"
+              placeholder="请输入账号"
+              value={account}
+              onChange={handleAccountChange}
+            />
+          </div>
+          <div className="input-group">
+            <input
+              type="password"
+              placeholder="请输入密码"
+              value={password}
+              onChange={handlePasswordChange}
+            />
+          </div>
+          <button
+            className="login-button"
+            onClick={handleLogin}
+            disabled={isButtonDisabled}
+          >
+            登录
+          </button>
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
         </div>
-      ) : (
-        <div>
-          <h1>Login</h1>
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button onClick={handleLogin}>Login</button>
-        </div>
-      )}
-    </div>
-  );
+    );
 }
+
+export default LoginPage;
