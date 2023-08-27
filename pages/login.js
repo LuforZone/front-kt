@@ -25,7 +25,7 @@ function LoginPage() {
                 headers: {
                     'Content-Type': 'application/json',
                 }, 
-                credentials: 'include', // 携带跨域请求的凭证
+                credentials: 'same-origin', // 携带跨域请求的凭证
                 body: JSON.stringify({
                     "account": account,
                     "password": password
