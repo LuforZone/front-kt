@@ -25,7 +25,7 @@ function MainPage() {
         // If not authenticated, redirect to error page
 
         // Fetch total pages count
-        fetch(`http://localhost:8080/api/users/count`)
+        fetch(`http://lufor.online:8080/api/users/count`)
             .then(response => response.json())
             .then(data => setTotalPages(data))
             .catch(error => console.error('Error fetching data:', error));
@@ -36,7 +36,7 @@ function MainPage() {
     }, []);
 
     const fetchPageData = (page) => {
-        fetch(`http://localhost:8080/api/users/${page}`)
+        fetch(`http://lufor.online:8080/api/users/${page}`)
             .then(response => response.json())
             .then(data => setUsersData(data));
         console.log(usersData);
@@ -57,7 +57,7 @@ function MainPage() {
         };
 
         try {
-            const response = await fetch('http://localhost:8080/api/users', {
+            const response = await fetch('http://lufor.online:8080/api/users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -92,7 +92,7 @@ function MainPage() {
 
         try {
             console.log("access put try");
-            const response = await fetch(`http://localhost:8080/api/users/${userToUpdate.id}`, {
+            const response = await fetch(`http://lufor.online:8080/api/users/${userToUpdate.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -110,7 +110,7 @@ function MainPage() {
     const handleDeleteDatas = async () => {
         const emailToDelete = emailToPost;
         try {
-            const response = await fetch(`http://localhost:8080/api/users/${emailToDelete}`, {
+            const response = await fetch(`http://lufor.online:8080/api/users/${emailToDelete}`, {
                 method: 'DELETE',
             });
             const responseData = await response.json();

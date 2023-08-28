@@ -20,14 +20,14 @@ function LoginPage() {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/users/login', {
+            const response = await fetch('http://lufor.online:8080/api/users/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Origin': 'lufor.online:3000',
                     'Access-Control-Request-Method': 'POST',
                 }, 
-                credentials: 'same-origin', // 携带跨域请求的凭证
+                credentials: 'include', // 携带跨域请求的凭证
                 body: JSON.stringify({
                     "account": account,
                     "password": password
