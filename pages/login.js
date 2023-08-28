@@ -24,6 +24,8 @@ function LoginPage() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Origin': 'lufor.online:3000',
+                    'Access-Control-Request-Method': 'POST',
                 }, 
                 credentials: 'same-origin', // 携带跨域请求的凭证
                 body: JSON.stringify({
